@@ -1,0 +1,14 @@
+test:
+  hostname: 192.168.1.111
+  multicastHostname: 239.255.0.1
+  multicastPort: 2368
+
+pcd:
+  path: /home/haan/test_out_pcd/
+
+
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: data-extract-lidar

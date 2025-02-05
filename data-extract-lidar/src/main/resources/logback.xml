@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="5 seconds" debug="false"
+               xmlns="http://ch.qos.logback/xml/ns/logback"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback
+               https://raw.githubusercontent.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd
+http://ch.qos.logback/xml/ns/logback ">
+
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan([%thread]) %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--应用普通日志输出到文件-->
+    <appender name="APP-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${server.log.dir}/real-time-control.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${server.log.dir}/real-time-control.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>128MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!--DEBUG及以上级别日志-->
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!--应用异常输出到文件-->
+    <appender name="APP-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${server.log.dir}/real-time-control.err.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${server.log.dir}/real-time-control.%d{yyyy-MM-dd}.%i.err.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>128MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!--警告以及警告以上级别日志-->
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <!--netty框架日志-->
+    <appender name="NETTY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${server.log.dir}/transmission.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${server.log.dir}/transmission.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>128MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!--DEBUG及以上级别日志-->
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <!--应用日志-->
+    <logger name="com.extract" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+<!--        <appender-ref ref="APP-INFO"/>-->
+        <appender-ref ref="APP-ERROR"/>
+    </logger>
+
+    <!--网络通信日志-->
+    <logger name="io.netty" level="debug" additivity="false">
+        <!--日志过多不输出到控制台-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--        <appender-ref ref="NETTY"/>-->
+    </logger>
+
+    <!--未声明的其他框架日志-->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="APP-INFO"/>
+        <appender-ref ref="APP-ERROR"/>
+    </root>
+
+</configuration>
